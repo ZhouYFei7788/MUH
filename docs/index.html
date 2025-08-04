@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <title>加湿除湿量计算工具</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; }
+    input { margin: 5px; padding: 5px; }
+    button { padding: 10px 20px; margin-top: 10px; }
+    .result { margin-top: 20px; font-weight: bold; }
+    table { margin-top: 20px; border-collapse: collapse; width: 100%; font-size: 14px; }
+    th, td { border: 1px solid #ccc; padding: 6px; text-align: center; }
+    th { background-color: #f2f2f2; }
+  </style>
+</head>
+<body>
+<h2>加湿除湿量计算工具</h2>
+
+<div>
+  <h3>一次性输入参数</h3>
+  <label>海拔高度 (米): <input type="number" id="altitude"></label>
+  <label>风口面积 (m²): <input type="number" id="area"></label>
+  <label>空气密度 (kg/m³): <input type="number" id="density"></label>
+</div>
+
+<div>
+  <h3>送风与回风数据</h3>
+  <label>送风干球温度 (°C): <input type="number" id="supply_temp"></label>
+  <label>送风相对湿度 (%): <input type="number" id="supply_rh"></label>
+  <label>回风干球温度 (°C): <input type="number" id="return_temp"></label>
+  <label>回风相对湿度 (%): <input type="number" id="return_rh"></label>
+  <label>风速 (m/s): <input type="number" id="velocity"></label>
+</div>
+
+<button onclick="calculate()">计算</button>
+<button onclick="clearInputs()">清除送回风与风速数据</button>
+
+<div class="result" id="result"></div>
+
+<table id="recordTable">
+  <thead>
+  <tr>
+    <th>公式与结果</th>
+    <th>参数记录</th>
+  </tr>
+  </thead>
+  <tbody></tbody>
+</table>
+
+<script>
+  function calcMixingRatio(altitude, temp, rh) {
+    const P0 = 101.325;
+    const L = 0.0065;
+    const T0 = 288.15;
+    const g = 9.80665;
+    const M = 0.0289644;
+    const R = 8.31447;
+
+    let tempFactor = 1 - (L * altitude) / T0;
+    let expFactor = (g * M) / (R * L);
+    let pressure = P0 * Math.pow(tempFactor, expFactor);
+
+    let Ps = 0.61078 * Math.exp((17.27 * temp) / (temp + 237.3));
+    let Pv = (rh / 100) * Ps;
+    let W = 0.622 * Pv / (pressure - Pv);
+
+    return W * 1000;
+  }
+
+  function calculate() {
+    let altitude = parseFloat(document.getElementById("altitude").value);
+    let area = parseFloat(document.getElementById("area").value);
+    let density = parseFloat(document.getElementById("density").value);
+
+    let supply_temp = parseFloat(document.getElementById("supply_temp").value);
+    let supply_rh = parseFloat(document.getElementById("supply_rh").value);
+
+    let return_temp = parseFloat(document.getElementById("return_temp").value);
+    let return_rh = parseFloat(document.getElementById("return_rh").value);
+
+    let velocity = parseFloat(document.getElementById("velocity").value);
+
+    if (isNaN(supply_temp) || isNaN(supply_rh) || isNaN(return_temp) || isNaN(return_rh) || isNaN(velocity)) {
+      alert("请完整填写送回风与风速数据！");
+      return;
+    }
+
+    let supply_w = calcMixingRatio(altitude, supply_temp, supply_rh);
+    let return_w = calcMixingRatio(altitude, return_temp, return_rh);
+
+    let volume_flow = area * velocity;
+    let volume_flow_hour = volume_flow * 3600;
+    let diff = return_w - supply_w;
+    let resultValue = (density * diff * volume_flow_hour / 1000).toFixed(2);
+
+    let resultText = `送风含水量：${supply_w.toFixed(2)} g/kg<br>回风含水量：${return_w.toFixed(2)} g/kg<br>`;
+
+    let formulaText = `[${density.toFixed(3)} * (${return_w.toFixed(2)} - ${supply_w.toFixed(2)}) * ${volume_flow_hour.toFixed(2)}] / 1000 = ${resultValue} kg/h`;
+
+    let statusText = diff > 0 ? '除湿' : (diff < 0 ? '加湿' : '无变化');
+
+    document.getElementById("result").innerHTML = resultText + statusText;
+
+    let paramSummary = `送:${supply_temp}°C/${supply_rh}% 回:${return_temp}°C/${return_rh}% 风速:${velocity}m/s`;
+
+    let table = document.getElementById("recordTable").getElementsByTagName('tbody')[0];
+    let newRow = table.insertRow();
+
+    newRow.insertCell(0).innerHTML = formulaText + ` (${statusText})`;
+    newRow.insertCell(1).innerHTML = paramSummary;
+  }
+
+  function clearInputs() {
+    document.getElementById("supply_temp").value = '';
+    document.getElementById("supply_rh").value = '';
+    document.getElementById("return_temp").value = '';
+    document.getElementById("return_rh").value = '';
+    document.getElementById("velocity").value = '';
+    document.getElementById("result").innerHTML = '';
+  }
+</script>
+</body>
+</html>
