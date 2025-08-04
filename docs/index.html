@@ -103,31 +103,34 @@
 
 <h2>加湿除湿量计算工具</h2>
 
-<div class="input-row" aria-label="一次性输入参数">
+<div class="input-row" aria-label="一次性输入参数1">
   <label for="altitude">海拔(m)
     <input type="number" id="altitude" />
   </label>
   <label for="area">风口面积(m²)
     <input type="number" id="area" step="0.01" />
   </label>
+</div>
+
+<div class="input-row" aria-label="一次性输入参数2">
   <label for="density">空气密度(kg/m³)
     <input type="number" id="density" step="0.01" />
   </label>
-</div>
-
-<div class="input-row" aria-label="送风数据">
   <label for="supply_temp">送风温度(°C)
     <input type="number" id="supply_temp" step="0.1" />
   </label>
+</div>
+
+<div class="input-row" aria-label="送风与回风数据1">
   <label for="supply_rh">送风湿度(%)
     <input type="number" id="supply_rh" step="0.1" />
+  </label>
+  <label for="return_temp">回风温度(°C)
+    <input type="number" id="return_temp" step="0.1" />
   </label>
 </div>
 
 <div class="input-row" aria-label="回风与风速数据">
-  <label for="return_temp">回风温度(°C)
-    <input type="number" id="return_temp" step="0.1" />
-  </label>
   <label for="return_rh">回风湿度(%)
     <input type="number" id="return_rh" step="0.1" />
   </label>
