@@ -18,57 +18,45 @@
       margin-bottom: 15px;
       font-size: 1.6rem;
     }
-    /* 容器采用flex横向布局，主轴横向排列 */
     .container {
-      display: flex;
-      flex-wrap: wrap; /* 宽度不足时换行 */
-      justify-content: center; /* 居中 */
-      gap: 20px;
-      max-width: 1000px;
+      max-width: 900px;
       margin: 0 auto 20px;
       padding: 0 10px;
     }
-    /* 两个参数输入区的宽度 */
-    .input-group {
-      flex: 1 1 280px; /* 最小280px，最大占满剩余空间 */
-      min-width: 260px;
-      max-width: 480px;
-      background: #f9f9f9;
-      border: 1px solid #ddd;
-      border-radius: 6px;
-      padding: 15px 20px;
-      box-sizing: border-box;
+    /* 一次性输入参数 行布局 */
+    .one-time-inputs,
+    .airflow-inputs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 15px;
+      margin-bottom: 15px;
+      justify-content: center;
+      align-items: center;
     }
-    .input-group h3 {
-      margin-top: 0;
-      margin-bottom: 10px;
-      font-size: 1.2rem;
-      color: #222;
-    }
-    /* 标签和输入框横向排列 */
     label {
       display: flex;
-      justify-content: space-between;
       align-items: center;
-      margin-bottom: 12px;
-      font-size: 0.9rem;
+      font-size: 0.95rem;
       color: #444;
+      min-width: 80px;
+      flex: 1 1 140px;
+      max-width: 180px;
+      justify-content: space-between;
     }
-    /* 输入框宽度固定且窄一点 */
     input[type="number"] {
-      width: 100px;
+      width: 80px;
       padding: 6px 8px;
       font-size: 0.9rem;
       border: 1px solid #ccc;
       border-radius: 4px;
       text-align: right;
+      margin-left: 5px;
       transition: border-color 0.2s;
     }
     input[type="number"]:focus {
       border-color: #3399ff;
       outline: none;
     }
-    /* 按钮样式 */
     button {
       display: inline-block;
       background-color: #3399ff;
@@ -84,7 +72,9 @@
     button:hover {
       background-color: #267acc;
     }
-    /* 结果显示区域 */
+    .button-container {
+      text-align: center;
+    }
     .result {
       margin-top: 20px;
       font-weight: 600;
@@ -94,8 +84,8 @@
       color: #222;
       padding: 0 10px;
       text-align: center;
+      word-break: break-word;
     }
-    /* 表格 */
     table {
       margin-top: 20px;
       border-collapse: collapse;
@@ -114,28 +104,17 @@
       background-color: #f2f2f2;
       font-weight: 600;
     }
-
-    /* 手机屏幕适配，最大宽度480px以下时垂直排列 */
+    /* 手机适配 */
     @media (max-width: 480px) {
-      .container {
-        flex-direction: column;
+      label {
+        min-width: 100%;
         max-width: 100%;
-        padding: 0 15px;
-      }
-      .input-group {
-        max-width: 100%;
-        min-width: auto;
-        width: 100%;
-        padding: 12px 15px;
-        margin-bottom: 15px;
+        justify-content: flex-start;
+        gap: 8px;
       }
       input[type="number"] {
         width: 100%;
-      }
-      label {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 4px;
+        margin-left: 0;
       }
       button {
         width: 100%;
@@ -147,8 +126,9 @@
         font-size: 1.2rem;
         padding: 0 10px;
       }
-      table {
-        font-size: 12px;
+      .one-time-inputs,
+      .airflow-inputs {
+        justify-content: flex-start;
       }
     }
   </style>
@@ -157,55 +137,53 @@
   <h2>加湿除湿量计算工具</h2>
 
   <div class="container">
-    <div class="input-group">
-      <h3>一次性输入参数</h3>
-      <label>海拔高度 (米):
-        <input type="number" id="altitude" placeholder="例: 500" />
+    <div class="one-time-inputs" aria-label="一次性输入参数">
+      <label for="altitude">海拔（米）
+        <input type="number" id="altitude" placeholder="500" />
       </label>
-      <label>风口面积 (m²):
-        <input type="number" id="area" placeholder="例: 1.2" />
+      <label for="area">风口面积（m²）
+        <input type="number" id="area" placeholder="1.2" />
       </label>
-      <label>空气密度 (kg/m³):
-        <input type="number" id="density" placeholder="例: 1.2" />
+      <label for="density">空气密度（kg/m³）
+        <input type="number" id="density" placeholder="1.2" />
+      </label>
+    </div>
+
+    <div class="airflow-inputs" aria-label="送风与回风数据">
+      <label for="supply_temp">送风温度(°C)
+        <input type="number" id="supply_temp" placeholder="22" />
+      </label>
+      <label for="supply_rh">送风湿度(%)
+        <input type="number" id="supply_rh" placeholder="55" />
+      </label>
+      <label for="return_temp">回风温度(°C)
+        <input type="number" id="return_temp" placeholder="23" />
+      </label>
+      <label for="return_rh">回风湿度(%)
+        <input type="number" id="return_rh" placeholder="33" />
+      </label>
+      <label for="velocity">风速(m/s)
+        <input type="number" id="velocity" placeholder="2.3" />
       </label>
     </div>
 
-    <div class="input-group">
-      <h3>送风与回风数据</h3>
-      <label>送风干球温度 (°C):
-        <input type="number" id="supply_temp" placeholder="例: 22" />
-      </label>
-      <label>送风相对湿度 (%):
-        <input type="number" id="supply_rh" placeholder="例: 55" />
-      </label>
-      <label>回风干球温度 (°C):
-        <input type="number" id="return_temp" placeholder="例: 23" />
-      </label>
-      <label>回风相对湿度 (%):
-        <input type="number" id="return_rh" placeholder="例: 33" />
-      </label>
-      <label>风速 (m/s):
-        <input type="number" id="velocity" placeholder="例: 2.3" />
-      </label>
+    <div class="button-container">
+      <button onclick="calculate()">计算</button>
+      <button onclick="clearInputs()">清除送回风与风速数据</button>
     </div>
+
+    <div class="result" id="result"></div>
+
+    <table id="recordTable">
+      <thead>
+        <tr>
+          <th>公式与结果</th>
+          <th>参数记录</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
   </div>
-
-  <div style="text-align:center;">
-    <button onclick="calculate()">计算</button>
-    <button onclick="clearInputs()">清除送回风与风速数据</button>
-  </div>
-
-  <div class="result" id="result"></div>
-
-  <table id="recordTable">
-    <thead>
-      <tr>
-        <th>公式与结果</th>
-        <th>参数记录</th>
-      </tr>
-    </thead>
-    <tbody></tbody>
-  </table>
 
   <script>
     function calcMixingRatio(altitude, temp, rh) {
