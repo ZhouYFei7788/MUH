@@ -7,48 +7,47 @@
 <style>
   body {
     font-family: Arial, sans-serif;
-    margin: 10px;
+    margin: 8px;
     padding: 0;
     box-sizing: border-box;
     color: #333;
   }
   h2 {
     text-align: center;
-    margin-bottom: 15px;
-    font-size: 1.4rem;
+    margin-bottom: 12px;
+    font-size: 1.3rem;
   }
   .input-row {
     display: flex;
-    flex-wrap: nowrap;
-    gap: 10px;
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
+    flex-wrap: wrap;
+    gap: 8px;
     padding-bottom: 5px;
   }
   label {
     white-space: nowrap;
-    display: inline-flex;
+    display: flex;
     align-items: center;
-    font-size: 0.9rem;
-    min-width: 90px;
+    font-size: 0.85rem;
+    min-width: 80px;
+    flex: 1 1 45%;
   }
   input[type=number] {
-    width: 60px;
-    padding: 5px 6px;
-    font-size: 0.9rem;
+    width: 55px;
+    padding: 4px 5px;
+    font-size: 0.85rem;
     border: 1px solid #ccc;
     border-radius: 4px;
-    margin-left: 6px;
+    margin-left: 5px;
     box-sizing: border-box;
     text-align: right;
   }
   button {
-    width: 48%;
-    padding: 10px 0;
-    margin: 10px 1% 0 1%;
-    font-size: 1rem;
+    width: 100%;
+    padding: 8px 0;
+    margin: 8px 0;
+    font-size: 0.95rem;
     border: none;
-    border-radius: 5px;
+    border-radius: 4px;
     cursor: pointer;
     color: white;
   }
@@ -59,31 +58,43 @@
     background-color: #d9534f;
   }
   .result {
-    margin-top: 20px;
+    margin-top: 15px;
     font-weight: 600;
-    font-size: 1.1rem;
-    text-align: center;
-    min-height: 50px;
+    font-size: 1rem;
+    min-height: 40px;
+    text-align: left;
   }
   table {
     width: 100%;
     border-collapse: collapse;
-    margin-top: 20px;
-    font-size: 0.85rem;
+    margin-top: 15px;
+    font-size: 0.8rem;
   }
   th, td {
     border: 1px solid #aaa;
-    padding: 6px 8px;
-    text-align: center;
+    padding: 5px 6px;
+    text-align: left;
+    vertical-align: top;
   }
   th {
     background-color: #f5f5f5;
   }
   @media (max-width: 480px) {
+    label {
+      flex: 1 1 100%;
+    }
+    input[type=number] {
+      width: 50px;
+      font-size: 0.8rem;
+    }
     button {
-      width: 100%;
-      margin: 8px 0 0 0;
-      font-size: 1.1rem;
+      font-size: 1rem;
+    }
+    table {
+      font-size: 0.75rem;
+    }
+    th, td {
+      padding: 4px 5px;
     }
   }
 </style>
@@ -94,35 +105,38 @@
 
 <div class="input-row" aria-label="一次性输入参数">
   <label for="altitude">海拔(m)
-    <input type="number" id="altitude" placeholder="500" />
+    <input type="number" id="altitude" />
   </label>
   <label for="area">风口面积(m²)
-    <input type="number" id="area" placeholder="1.2" step="0.01" />
+    <input type="number" id="area" step="0.01" />
   </label>
   <label for="density">空气密度(kg/m³)
-    <input type="number" id="density" placeholder="1.2" step="0.01" />
+    <input type="number" id="density" step="0.01" />
   </label>
 </div>
 
-<div class="input-row" aria-label="送风与回风数据">
+<div class="input-row" aria-label="送风数据">
   <label for="supply_temp">送风温度(°C)
-    <input type="number" id="supply_temp" placeholder="22" step="0.1" />
+    <input type="number" id="supply_temp" step="0.1" />
   </label>
   <label for="supply_rh">送风湿度(%)
-    <input type="number" id="supply_rh" placeholder="55" step="0.1" />
-  </label>
-  <label for="return_temp">回风温度(°C)
-    <input type="number" id="return_temp" placeholder="23" step="0.1" />
-  </label>
-  <label for="return_rh">回风湿度(%)
-    <input type="number" id="return_rh" placeholder="33" step="0.1" />
-  </label>
-  <label for="velocity">风速(m/s)
-    <input type="number" id="velocity" placeholder="2.3" step="0.01" />
+    <input type="number" id="supply_rh" step="0.1" />
   </label>
 </div>
 
-<div style="text-align:center;">
+<div class="input-row" aria-label="回风与风速数据">
+  <label for="return_temp">回风温度(°C)
+    <input type="number" id="return_temp" step="0.1" />
+  </label>
+  <label for="return_rh">回风湿度(%)
+    <input type="number" id="return_rh" step="0.1" />
+  </label>
+  <label for="velocity">风速(m/s)
+    <input type="number" id="velocity" step="0.01" />
+  </label>
+</div>
+
+<div>
   <button class="calculate" onclick="calculate()">计算</button>
   <button class="clear" onclick="clearInputs()">清除送回风与风速数据</button>
 </div>
