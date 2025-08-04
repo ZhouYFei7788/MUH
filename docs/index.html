@@ -1,268 +1,220 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>加湿除湿量计算工具</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 10px;
-      padding: 0;
-      box-sizing: border-box;
-      background: #fff;
-      color: #333;
-    }
-    h2 {
-      text-align: center;
-      margin-bottom: 15px;
-      font-size: 1.6rem;
-    }
-    .container {
-      max-width: 900px;
-      margin: 0 auto 20px;
-      padding: 0 10px;
-    }
-    .one-time-inputs,
-    .airflow-inputs {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 15px;
-      margin-bottom: 15px;
-      justify-content: center;
-      align-items: center;
-    }
-    label {
-      display: flex;
-      align-items: center;
-      font-size: 0.95rem;
-      color: #444;
-      min-width: 80px;
-      flex: 1 1 140px;
-      max-width: 180px;
-      justify-content: space-between;
-    }
-    input[type="number"] {
-      width: 80px;
-      padding: 6px 8px;
-      font-size: 0.9rem;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-      text-align: right;
-      margin-left: 5px;
-      transition: border-color 0.2s;
-    }
-    input[type="number"]:focus {
-      border-color: #3399ff;
-      outline: none;
-    }
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>加湿除湿量计算工具</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    margin: 10px;
+    padding: 0;
+    box-sizing: border-box;
+    color: #333;
+  }
+  h2 {
+    text-align: center;
+    margin-bottom: 15px;
+    font-size: 1.4rem;
+  }
+  .input-row {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 10px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 5px;
+  }
+  label {
+    white-space: nowrap;
+    display: inline-flex;
+    align-items: center;
+    font-size: 0.9rem;
+    min-width: 90px;
+  }
+  input[type=number] {
+    width: 60px;
+    padding: 5px 6px;
+    font-size: 0.9rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    margin-left: 6px;
+    box-sizing: border-box;
+    text-align: right;
+  }
+  button {
+    width: 48%;
+    padding: 10px 0;
+    margin: 10px 1% 0 1%;
+    font-size: 1rem;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    color: white;
+  }
+  button.calculate {
+    background-color: #3399ff;
+  }
+  button.clear {
+    background-color: #d9534f;
+  }
+  .result {
+    margin-top: 20px;
+    font-weight: 600;
+    font-size: 1.1rem;
+    text-align: center;
+    min-height: 50px;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    font-size: 0.85rem;
+  }
+  th, td {
+    border: 1px solid #aaa;
+    padding: 6px 8px;
+    text-align: center;
+  }
+  th {
+    background-color: #f5f5f5;
+  }
+  @media (max-width: 480px) {
     button {
-      display: inline-block;
-      background-color: #3399ff;
-      color: white;
-      border: none;
-      padding: 10px 22px;
-      margin: 10px 8px 0 0;
-      font-size: 1rem;
-      border-radius: 5px;
-      cursor: pointer;
-      transition: background-color 0.3s ease;
-    }
-    button:hover {
-      background-color: #267acc;
-    }
-    .button-container {
-      text-align: center;
-    }
-    .result {
-      margin-top: 20px;
-      font-weight: 600;
-      font-size: 1.1rem;
-      line-height: 1.4;
-      min-height: 50px;
-      color: #222;
-      padding: 0 10px;
-      text-align: center;
-      word-break: break-word;
-    }
-    table {
-      margin-top: 20px;
-      border-collapse: collapse;
       width: 100%;
-      font-size: 13px;
-      table-layout: fixed;
-      word-wrap: break-word;
+      margin: 8px 0 0 0;
+      font-size: 1.1rem;
     }
-    th, td {
-      border: 1px solid #ccc;
-      padding: 6px 10px;
-      text-align: center;
-      vertical-align: middle;
-    }
-    th {
-      background-color: #f2f2f2;
-      font-weight: 600;
-    }
-    /* 手机适配，强制横向不换行，允许滚动 */
-    @media (max-width: 480px) {
-      .one-time-inputs,
-      .airflow-inputs {
-        flex-wrap: nowrap !important; /* 禁止换行 */
-        overflow-x: auto;             /* 横向滚动 */
-        -webkit-overflow-scrolling: touch; /* 触屏滚动优化 */
-        gap: 10px;
-      }
-      label {
-        flex: 0 0 auto;
-        width: 100px;
-        min-width: auto;
-        max-width: none;
-        justify-content: space-between;
-      }
-      input[type="number"] {
-        width: 60px;
-        margin-left: 5px;
-      }
-      button {
-        width: 100%;
-        margin: 10px 0 0 0;
-        padding: 12px 0;
-        font-size: 1.1rem;
-      }
-      .result {
-        font-size: 1.2rem;
-        padding: 0 10px;
-      }
-    }
-  </style>
+  }
+</style>
 </head>
 <body>
-  <h2>加湿除湿量计算工具</h2>
 
-  <div class="container">
-    <div class="one-time-inputs" aria-label="一次性输入参数">
-      <label for="altitude">海拔（米）
-        <input type="number" id="altitude" placeholder="500" />
-      </label>
-      <label for="area">风口面积（m²）
-        <input type="number" id="area" placeholder="1.2" />
-      </label>
-      <label for="density">空气密度（kg/m³）
-        <input type="number" id="density" placeholder="1.2" />
-      </label>
-    </div>
+<h2>加湿除湿量计算工具</h2>
 
-    <div class="airflow-inputs" aria-label="送风与回风数据">
-      <label for="supply_temp">送风温度(°C)
-        <input type="number" id="supply_temp" placeholder="22" />
-      </label>
-      <label for="supply_rh">送风湿度(%)
-        <input type="number" id="supply_rh" placeholder="55" />
-      </label>
-      <label for="return_temp">回风温度(°C)
-        <input type="number" id="return_temp" placeholder="23" />
-      </label>
-      <label for="return_rh">回风湿度(%)
-        <input type="number" id="return_rh" placeholder="33" />
-      </label>
-      <label for="velocity">风速(m/s)
-        <input type="number" id="velocity" placeholder="2.3" />
-      </label>
-    </div>
+<div class="input-row" aria-label="一次性输入参数">
+  <label for="altitude">海拔(m)
+    <input type="number" id="altitude" placeholder="500" />
+  </label>
+  <label for="area">风口面积(m²)
+    <input type="number" id="area" placeholder="1.2" step="0.01" />
+  </label>
+  <label for="density">空气密度(kg/m³)
+    <input type="number" id="density" placeholder="1.2" step="0.01" />
+  </label>
+</div>
 
-    <div class="button-container">
-      <button onclick="calculate()">计算</button>
-      <button onclick="clearInputs()">清除送回风与风速数据</button>
-    </div>
+<div class="input-row" aria-label="送风与回风数据">
+  <label for="supply_temp">送风温度(°C)
+    <input type="number" id="supply_temp" placeholder="22" step="0.1" />
+  </label>
+  <label for="supply_rh">送风湿度(%)
+    <input type="number" id="supply_rh" placeholder="55" step="0.1" />
+  </label>
+  <label for="return_temp">回风温度(°C)
+    <input type="number" id="return_temp" placeholder="23" step="0.1" />
+  </label>
+  <label for="return_rh">回风湿度(%)
+    <input type="number" id="return_rh" placeholder="33" step="0.1" />
+  </label>
+  <label for="velocity">风速(m/s)
+    <input type="number" id="velocity" placeholder="2.3" step="0.01" />
+  </label>
+</div>
 
-    <div class="result" id="result"></div>
+<div style="text-align:center;">
+  <button class="calculate" onclick="calculate()">计算</button>
+  <button class="clear" onclick="clearInputs()">清除送回风与风速数据</button>
+</div>
 
-    <table id="recordTable">
-      <thead>
-        <tr>
-          <th>公式与结果</th>
-          <th>参数记录</th>
-        </tr>
-      </thead>
-      <tbody></tbody>
-    </table>
-  </div>
+<div class="result" id="result"></div>
 
-  <script>
-    function calcMixingRatio(altitude, temp, rh) {
-      const P0 = 101.325;
-      const L = 0.0065;
-      const T0 = 288.15;
-      const g = 9.80665;
-      const M = 0.0289644;
-      const R = 8.31447;
+<table id="recordTable">
+  <thead>
+    <tr>
+      <th>公式与结果</th>
+      <th>参数记录</th>
+    </tr>
+  </thead>
+  <tbody></tbody>
+</table>
 
-      let tempFactor = 1 - (L * altitude) / T0;
-      let expFactor = (g * M) / (R * L);
-      let pressure = P0 * Math.pow(tempFactor, expFactor);
+<script>
+  function calcMixingRatio(altitude, temp, rh) {
+    const P0 = 101.325;
+    const L = 0.0065;
+    const T0 = 288.15;
+    const g = 9.80665;
+    const M = 0.0289644;
+    const R = 8.31447;
 
-      let Ps = 0.61078 * Math.exp((17.27 * temp) / (temp + 237.3));
-      let Pv = (rh / 100) * Ps;
-      let W = 0.622 * Pv / (pressure - Pv);
+    let tempFactor = 1 - (L * altitude) / T0;
+    let expFactor = (g * M) / (R * L);
+    let pressure = P0 * Math.pow(tempFactor, expFactor);
 
-      return W * 1000;
+    let Ps = 0.61078 * Math.exp((17.27 * temp) / (temp + 237.3));
+    let Pv = (rh / 100) * Ps;
+    let W = 0.622 * Pv / (pressure - Pv);
+
+    return W * 1000;
+  }
+
+  function calculate() {
+    let altitude = parseFloat(document.getElementById("altitude").value);
+    let area = parseFloat(document.getElementById("area").value);
+    let density = parseFloat(document.getElementById("density").value);
+
+    let supply_temp = parseFloat(document.getElementById("supply_temp").value);
+    let supply_rh = parseFloat(document.getElementById("supply_rh").value);
+
+    let return_temp = parseFloat(document.getElementById("return_temp").value);
+    let return_rh = parseFloat(document.getElementById("return_rh").value);
+
+    let velocity = parseFloat(document.getElementById("velocity").value);
+
+    if (isNaN(supply_temp) || isNaN(supply_rh) || isNaN(return_temp) || isNaN(return_rh) || isNaN(velocity)) {
+      alert("请完整填写送回风与风速数据！");
+      return;
+    }
+    if (isNaN(altitude) || isNaN(area) || isNaN(density)) {
+      alert("请填写一次性输入参数！");
+      return;
     }
 
-    function calculate() {
-      let altitude = parseFloat(document.getElementById("altitude").value);
-      let area = parseFloat(document.getElementById("area").value);
-      let density = parseFloat(document.getElementById("density").value);
+    let supply_w = calcMixingRatio(altitude, supply_temp, supply_rh);
+    let return_w = calcMixingRatio(altitude, return_temp, return_rh);
 
-      let supply_temp = parseFloat(document.getElementById("supply_temp").value);
-      let supply_rh = parseFloat(document.getElementById("supply_rh").value);
+    let volume_flow = area * velocity;
+    let volume_flow_hour = volume_flow * 3600;
+    let diff = return_w - supply_w;
+    let resultValue = (density * diff * volume_flow_hour / 1000).toFixed(2);
 
-      let return_temp = parseFloat(document.getElementById("return_temp").value);
-      let return_rh = parseFloat(document.getElementById("return_rh").value);
+    let resultText = `送风含水量：${supply_w.toFixed(2)} g/kg<br>回风含水量：${return_w.toFixed(2)} g/kg<br>`;
 
-      let velocity = parseFloat(document.getElementById("velocity").value);
+    let formulaText = `[${density.toFixed(3)} * (${return_w.toFixed(2)} - ${supply_w.toFixed(2)}) * ${volume_flow_hour.toFixed(2)}] / 1000 = ${resultValue} kg/h`;
 
-      if (isNaN(supply_temp) || isNaN(supply_rh) || isNaN(return_temp) || isNaN(return_rh) || isNaN(velocity)) {
-        alert("请完整填写送回风与风速数据！");
-        return;
-      }
-      if (isNaN(altitude) || isNaN(area) || isNaN(density)) {
-        alert("请填写一次性输入参数！");
-        return;
-      }
+    let statusText = diff > 0 ? '除湿' : (diff < 0 ? '加湿' : '无变化');
 
-      let supply_w = calcMixingRatio(altitude, supply_temp, supply_rh);
-      let return_w = calcMixingRatio(altitude, return_temp, return_rh);
+    document.getElementById("result").innerHTML = resultText + statusText;
 
-      let volume_flow = area * velocity;
-      let volume_flow_hour = volume_flow * 3600;
-      let diff = return_w - supply_w;
-      let resultValue = (density * diff * volume_flow_hour / 1000).toFixed(2);
+    let paramSummary = `送:${supply_temp}°C/${supply_rh}% 回:${return_temp}°C/${return_rh}% 风速:${velocity}m/s`;
 
-      let resultText = `送风含水量：${supply_w.toFixed(2)} g/kg<br>回风含水量：${return_w.toFixed(2)} g/kg<br>`;
+    let table = document.getElementById("recordTable").getElementsByTagName('tbody')[0];
+    let newRow = table.insertRow();
 
-      let formulaText = `[${density.toFixed(3)} * (${return_w.toFixed(2)} - ${supply_w.toFixed(2)}) * ${volume_flow_hour.toFixed(2)}] / 1000 = ${resultValue} kg/h`;
+    newRow.insertCell(0).innerHTML = formulaText + ` (${statusText})`;
+    newRow.insertCell(1).innerHTML = paramSummary;
+  }
 
-      let statusText = diff > 0 ? '除湿' : (diff < 0 ? '加湿' : '无变化');
+  function clearInputs() {
+    document.getElementById("supply_temp").value = '';
+    document.getElementById("supply_rh").value = '';
+    document.getElementById("return_temp").value = '';
+    document.getElementById("return_rh").value = '';
+    document.getElementById("velocity").value = '';
+    document.getElementById("result").innerHTML = '';
+  }
+</script>
 
-      document.getElementById("result").innerHTML = resultText + statusText;
-
-      let paramSummary = `送:${supply_temp}°C/${supply_rh}% 回:${return_temp}°C/${return_rh}% 风速:${velocity}m/s`;
-
-      let table = document.getElementById("recordTable").getElementsByTagName('tbody')[0];
-      let newRow = table.insertRow();
-
-      newRow.insertCell(0).innerHTML = formulaText + ` (${statusText})`;
-      newRow.insertCell(1).innerHTML = paramSummary;
-    }
-
-    function clearInputs() {
-      document.getElementById("supply_temp").value = '';
-      document.getElementById("supply_rh").value = '';
-      document.getElementById("return_temp").value = '';
-      document.getElementById("return_rh").value = '';
-      document.getElementById("velocity").value = '';
-      document.getElementById("result").innerHTML = '';
-    }
-  </script>
 </body>
 </html>
